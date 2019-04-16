@@ -279,6 +279,7 @@ def main():
 w=tk.Tk()
 w.title("F18 JDAM \"Cartridge Loader\"")
 w.iconbitmap(default=os.path.join(application_path, iconFile))
+w.resizable(False, False)
 #create a label
 lblHere=tk.Label(w,text="Paste Coordinates here:")
 lblHere.grid(row=0, sticky="W", padx=10)
