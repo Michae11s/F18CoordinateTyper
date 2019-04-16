@@ -5,7 +5,6 @@ Written By Kyle Michaels
 - **MAKE SURE JDAM IS ALREADY SELECTED ON MDI STORES PAGE**
 - **MAKE SURE TGT UFC IS NOT BOXED**
 - **Program will give you 5 seconds to tab back into DCS once executed**
-- *this revistion requires a file called temp with coords as below in the working directory*
 ## Takes 4 JDAM Coords in the form:
 ```
 LAT

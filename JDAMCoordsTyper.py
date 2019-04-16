@@ -2,7 +2,7 @@
 # Written by Kyle Michaels, see README.md for notes #
 #####################################################
 
-import tkinter
+import tkinter as tk
 import ctypes
 from ctypes import wintypes
 import time
@@ -20,7 +20,7 @@ KEYEVENTF_SCANCODE    = 0x0008
 
 MAPVK_VK_TO_VSC = 0
 
-# C struct definitions
+###### C struct definitions #####
 
 wintypes.ULONG_PTR = wintypes.WPARAM
 
@@ -73,12 +73,27 @@ user32.SendInput.argtypes = (wintypes.UINT, # nInputs
                              LPINPUT,       # pInputs
                              ctypes.c_int)  # cbSize
 
-# Functions
+###### Classes #####
+#a signle preplanned point object
+class Point:
+    def __init__(self, lat, lon, alt):
+        if(lat>=0):
+            self.NS=2 #North
+        else:
+            self.NS=8 #South
+        self.lat=str(abs(lat)).zfill(8)[0:6]
+        self.latd=str(abs(lat)).zfill(8)[6:8]
 
-# def ltk(ltr):
-    # num=ord(ltr)
-    # return num-0x20
+        if(lon>=0):
+            self.EW=6 #East
+        else:
+            self.EW=3 #West
+        self.lon=str(abs(lon)).zfill(8)[0:6]
+        self.lond=str(abs(lon)).zfill(8)[6:8]
 
+        self.alt = alt
+
+###### Functions #####
 def PressKey(hexKeyCode):
     x = INPUT(type=INPUT_KEYBOARD,
               ki=KEYBDINPUT(wVk=hexKeyCode))
@@ -91,7 +106,6 @@ def ReleaseKey(hexKeyCode):
     user32.SendInput(1, ctypes.byref(x), ctypes.sizeof(x))
 
 # msdn.microsoft.com/en-us/library/dd375731 source for scan codes
-
 def numK(num):
     if(num<0|num>9):
         print("num out of bounds func only handles int 0-9")
@@ -105,16 +119,10 @@ def LALT():
 def LCTRL():
     return 0xA2
 
+#couldn't find a scan code for Num Enter
 def ENTER():
     return 0x0D
 
-# def sendString(keys):
-#     keys=keys.lower()
-#     for ltr in keys:
-#         PressKey(ltk(ltr))
-#         time.sleep(0.1)
-#         ReleaseKey(ltk(ltr))
-#
 def sendNum(num):
     numStr=str(num)
     for ltr in numStr:
@@ -134,31 +142,16 @@ def sendCombo(mod, key):
     ReleaseKey(key)
     ReleaseKey(mod)
 
-class Point:
-    def __init__(self, lat, lon, alt):
-        if(lat>=0):
-            self.NS=2 #North
-        else:
-            self.NS=8 #South
-        self.lat=str(abs(lat)).zfill(8)[0:6]
-        self.latd=str(abs(lat)).zfill(8)[6:8]
-
-        if(lon>=0):
-            self.EW=6 #East
-        else:
-            self.EW=3 #West
-        self.lon=str(abs(lon)).zfill(8)[0:6]
-        self.lond=str(abs(lon)).zfill(8)[6:8]
-
-        self.alt = alt
-
 #Create the points from file for now
-msnNum=0
-PP=[]
-with open("./temp") as fi:
+def CreatePlan():
+    coord=entCoords.get("1.0",'end-1c')
+    coord=coord.split("\n")
+    plan=[]
     loop=0
-    for line in fi:
-        if(loop==0):
+    for line in coord:
+        if(line==""):
+            break
+        elif(loop==0):
             lat=int(line)
             loop=1
         elif(loop==1):
@@ -166,88 +159,109 @@ with open("./temp") as fi:
             loop=2
         elif(loop==2):
             elev=int(line)
-            PP.append(Point(lat, lon, elev))
-            msnNum+=1
+            plan.append(Point(lat, lon, elev))
             loop=0
+    return plan
 
-# give time for user to switch back to dcs
-time.sleep(5)
+def main():
+    PP=CreatePlan()
+    # give time for user to switch back to dcs
+    time.sleep(5)
+    #start sending keys
+    #ONCE AGAIN ASSUMING JDAMS ARE ALREAD SELECTED
+    #Menu           L MDI PB 18
+    sendCombo(LCTRL(),numK(6))
+    time.sleep(.5)
+    #JDAM DISPLAY   L MDI PB 11
+    sendCombo(LCTRL(),numK(8))
+    time.sleep(.5)
+    #MSN Button     L MDI PB 4
+    sendCombo(LCTRL(),numK(7))
+    time.sleep(.5)
+    #PP1            L MDI PB 6
+    sendCombo(LCTRL(),numK(1))
+    time.sleep(.5)
+    #TGT UFC        L MDI PB 14
+    sendCombo(LCTRL(),numK(9))
+    time.sleep(.5)
+    #POSITION       UFC OPTION 3
+    sendCombo(LALT(),numK(3))
+    time.sleep(.5)
+    #lat            UFC OPTION 1
+    sendCombo(LALT(),numK(1))
+    time.sleep(.5)
+    #Type latitude
+    x=1
+    for pnt in PP:
+        sendCombo(LCTRL(),numK(x))
+        time.sleep(.3)
+        x+=1
+        sendNum(pnt.NS)
+        time.sleep(.2)
+        sendNum(pnt.lat)
+        sendKey(ENTER())
+        time.sleep(1)
+        sendNum(pnt.latd)
+        sendKey(ENTER())
+        time.sleep(.2)
 
-#start sending keys
-#ONCE AGAIN ASSUMING JDAMS ARE ALREAD SELECTED
+    #lon            UFC OPTION 3
+    sendCombo(LALT(),numK(3))
+    #Type longitude
+    x=1
+    for pnt in PP:
+        sendCombo(LCTRL(),numK(x))
+        time.sleep(.3)
+        x+=1
+        sendNum(pnt.EW)
+        time.sleep(.2)
+        sendNum(pnt.lon)
+        sendKey(ENTER())
+        time.sleep(1)
+        sendNum(pnt.lond)
+        sendKey(ENTER())
+        time.sleep(.2)
 
-#Menu           L MDI PB 18
-sendCombo(LCTRL(),numK(6))
-time.sleep(.5)
-#JDAM DISPLAY   L MDI PB 11
-sendCombo(LCTRL(),numK(8))
-time.sleep(.5)
-#MSN Button     L MDI PB 4
-sendCombo(LCTRL(),numK(7))
-time.sleep(.5)
-#PP1            L MDI PB 6
-sendCombo(LCTRL(),numK(1))
-time.sleep(.5)
-#TGT UFC        L MDI PB 14
-sendCombo(LCTRL(),numK(9))
-time.sleep(.5)
-#POSITION       UFC OPTION 3
-sendCombo(LALT(),numK(3))
-time.sleep(.5)
-#lat            UFC OPTION 1
-sendCombo(LALT(),numK(1))
-time.sleep(.5)
-#Type latitude
-x=1
-for pnt in PP:
-    sendCombo(LCTRL(),numK(x))
-    time.sleep(.3)
-    x+=1
-    sendNum(pnt.NS)
-    time.sleep(.2)
-    sendNum(pnt.lat)
-    sendKey(ENTER())
-    time.sleep(1)
-    sendNum(pnt.latd)
-    sendKey(ENTER())
-    time.sleep(.2)
+    #reselect elevation
+    #TGT UFC        L MDI PB 14
+    sendCombo(LCTRL(),numK(9))
+    time.sleep(.5)
+    #TGT UFC        L MDI PB 14
+    sendCombo(LCTRL(),numK(9))
+    time.sleep(.5)
+    #ELEVATION      UFC OPTION 4
+    sendCombo(LALT(),numK(4))
+    time.sleep(.5)
+    #FEET           UFT OPTION 3
+    sendCombo(LALT(),numK(3))
+    time.sleep(.5)
+    #type elevations
+    x=1
+    for pnt in PP:
+        sendCombo(LCTRL(),numK(x))
+        time.sleep(.3)
+        x+=1
+        sendNum(pnt.alt)
+        sendKey(ENTER())
+        time.sleep(.2)
 
-#lon            UFC OPTION 3
-sendCombo(LALT(),numK(3))
-#Type longitude
-x=1
-for pnt in PP:
-    sendCombo(LCTRL(),numK(x))
-    time.sleep(.3)
-    x+=1
-    sendNum(pnt.EW)
-    time.sleep(.2)
-    sendNum(pnt.lon)
-    sendKey(ENTER())
-    time.sleep(1)
-    sendNum(pnt.lond)
-    sendKey(ENTER())
-    time.sleep(.2)
+def temp():
+    PP=CreatePlan()
+    print(PP[1].latd)
 
-#reselect elevation
-#TGT UFC        L MDI PB 14
-sendCombo(LCTRL(),numK(9))
-time.sleep(.5)
-#TGT UFC        L MDI PB 14
-sendCombo(LCTRL(),numK(9))
-time.sleep(.5)
-#ELEVATION      UFC OPTION 4
-sendCombo(LALT(),numK(4))
-time.sleep(.5)
-#FEET           UFT OPTION 3
-sendCombo(LALT(),numK(3))
-time.sleep(.5)
-#type elevations
-x=1
-for pnt in PP:
-    sendCombo(LCTRL(),numK(x))
-    time.sleep(.3)
-    x+=1
-    sendNum(pnt.alt)
-    sendKey(ENTER())
-    time.sleep(.2)
+##### Create the GUI #####
+#Create the window container
+w=tk.Tk()
+w.title("F18 JDAM Coordinate Typer")
+#create a label
+lblHere=tk.Label(w,text="Paste Coordinates here:")
+lblHere.grid(row=0, sticky="W", padx=10)
+#create data entry box
+entCoords=tk.Text(w, height=13, width=50)
+entCoords.grid(row=1, padx=10)
+#create run button
+btnRun=tk.Button(w, text='Run', width=25, command=temp)
+btnRun.grid(row=2,pady=7)
+##### Run some code #####
+w.mainloop()
+# main()
