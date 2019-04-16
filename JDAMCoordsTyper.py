@@ -7,7 +7,8 @@ import ctypes
 from ctypes import wintypes
 import time
 import tempfile
-import base64, zlib
+import os
+import sys
 
 user32 = ctypes.WinDLL('user32', use_last_error=True)
 
@@ -22,12 +23,13 @@ KEYEVENTF_SCANCODE    = 0x0008
 
 MAPVK_VK_TO_VSC = 0
 
-##### Create a blank icon #####
-ICON = zlib.decompress(base64.b64decode('eJxjYGAEQgEBBiDJwZDBy'
-    'sAgxsDAoAHEQCEGBQaIOAg4sDIgACMUj4JRMApGwQgF/ykEAFXxQRc='))
-_, ICON_PATH = tempfile.mkstemp()
-with open(ICON_PATH, 'wb') as icon_file:
-    icon_file.write(ICON)
+##### ADD DATA #####
+iconFile='HoneyBadgers48.ico'
+
+if getattr(sys, 'frozen', False):
+    application_path = sys._MEIPASS
+elif __file__:
+    application_path = os.path.dirname(__file__)
 
 ###### C struct definitions #####
 
@@ -175,7 +177,11 @@ def CreatePlan():
 def main():
     PP=CreatePlan()
     # give time for user to switch back to dcs
-    time.sleep(5)
+    try:
+        ddd=int(boxDelay.get())
+    except:
+        ddd=15
+    time.sleep()
     #start sending keys
     #ONCE AGAIN ASSUMING JDAMS ARE ALREAD SELECTED
     #Menu           L MDI PB 18
@@ -241,7 +247,7 @@ def main():
     #ELEVATION      UFC OPTION 4
     sendCombo(LALT(),numK(4))
     time.sleep(.5)
-    #FEET           UFT OPTION 3
+    #FEET           UFC OPTION 3
     sendCombo(LALT(),numK(3))
     time.sleep(.5)
     #type elevations
@@ -257,17 +263,23 @@ def main():
 ##### Create the GUI #####
 #Create the window container
 w=tk.Tk()
-w.title("F18 JDAM Coordinate Typer")
-w.iconbitmap(default=ICON_PATH)
+w.title("F18 JDAM \"Cartridge Loader\"")
+w.iconbitmap(default=os.path.join(application_path, iconFile))
 #create a label
 lblHere=tk.Label(w,text="Paste Coordinates here:")
 lblHere.grid(row=0, sticky="W", padx=10)
 #create data entry box
 entCoords=tk.Text(w, height=13, width=50)
-entCoords.grid(row=1, padx=10)
+entCoords.grid(row=1, column=0, columnspan=2, padx=10)
+#create another label for the delay
+lblDelay=tk.Label(w,text="Set Alt-tab Delay(sec):")
+lblDelay.grid(row=2, column=0, sticky="E", padx=10, pady=10)
+#create spin box
+boxDelay=tk.Spinbox(w, values=(5,10,15,20,25,30,35,40,45,50,55,60), validate="all")
+boxDelay.grid(row=2, column=1, sticky="W", padx=10)
 #create run button
 btnRun=tk.Button(w, text='Run', width=25, command=main)
-btnRun.grid(row=2,pady=7)
+btnRun.grid(row=3, column=0, columnspan=2, pady=7)
 ##### Run some code #####
 w.mainloop()
 # main()
