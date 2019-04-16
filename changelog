@@ -1,4 +1,7 @@
 # Changelog
+##V1.1.1
+- Made the window non-resizable for llama
+
 ## V1.1
 - Added variable delay to alt tab back in
 - Added HoneyBadgers icon
