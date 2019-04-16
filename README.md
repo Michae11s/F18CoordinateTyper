@@ -19,7 +19,7 @@
 # Expects PP1-4 to be vertical with no headers/footers      #
 #                                                           #
 # KEYBINDS MUST BE BY DEFAULT::                             #
-#   NUM 0-9         UFC 0-9                                 #
+   NUM 0-9         UFC 0-9
 #   ENTER           UFC ENTER (NOT numEnter, reg enter)     #
 #   LALT+NUM1-5     UFC Option Select 1-5                   #
 #   LCTRL+NUM1-4    LEFT MDI PB 6-9                         #
@@ -28,6 +28,5 @@
 #   LCTRL+NUM8      LEFT MDI PB 11                          #
 #   LCTRL+NUM9      LEFT MDI PB 14                          #
 #                                                           #
-# Program will give you 5 seconds to tab back into DCS      #
-#  once executed                                            #
+# Program will give you 5 seconds to tab back into DCS once executed                                            #
 #############################################################
