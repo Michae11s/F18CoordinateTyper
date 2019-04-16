@@ -6,6 +6,8 @@ import tkinter as tk
 import ctypes
 from ctypes import wintypes
 import time
+import tempfile
+import base64, zlib
 
 user32 = ctypes.WinDLL('user32', use_last_error=True)
 
@@ -19,6 +21,13 @@ KEYEVENTF_UNICODE     = 0x0004
 KEYEVENTF_SCANCODE    = 0x0008
 
 MAPVK_VK_TO_VSC = 0
+
+##### Create a blank icon #####
+ICON = zlib.decompress(base64.b64decode('eJxjYGAEQgEBBiDJwZDBy'
+    'sAgxsDAoAHEQCEGBQaIOAg4sDIgACMUj4JRMApGwQgF/ykEAFXxQRc='))
+_, ICON_PATH = tempfile.mkstemp()
+with open(ICON_PATH, 'wb') as icon_file:
+    icon_file.write(ICON)
 
 ###### C struct definitions #####
 
@@ -245,14 +254,11 @@ def main():
         sendKey(ENTER())
         time.sleep(.2)
 
-def temp():
-    PP=CreatePlan()
-    print(PP[1].latd)
-
 ##### Create the GUI #####
 #Create the window container
 w=tk.Tk()
 w.title("F18 JDAM Coordinate Typer")
+w.iconbitmap(default=ICON_PATH)
 #create a label
 lblHere=tk.Label(w,text="Paste Coordinates here:")
 lblHere.grid(row=0, sticky="W", padx=10)
@@ -260,7 +266,7 @@ lblHere.grid(row=0, sticky="W", padx=10)
 entCoords=tk.Text(w, height=13, width=50)
 entCoords.grid(row=1, padx=10)
 #create run button
-btnRun=tk.Button(w, text='Run', width=25, command=temp)
+btnRun=tk.Button(w, text='Run', width=25, command=main)
 btnRun.grid(row=2,pady=7)
 ##### Run some code #####
 w.mainloop()
