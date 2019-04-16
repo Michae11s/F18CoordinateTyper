@@ -1,10 +1,14 @@
 # F18CoordinateTyper
 Written By Kyle Michaels
+feel free to build with:
+'''
+pyinstaller .\\JDAMCoordsTyper.spec
+'''
 
 ## Notes
 - **MAKE SURE JDAM IS ALREADY SELECTED ON MDI STORES PAGE**
 - **MAKE SURE TGT UFC IS NOT BOXED**
-- **Program will give you 5 seconds to tab back into DCS once executed**
+- **Use Delay Spin Wheel to Set the Amount of Time to Tab Back into Game**
 ## Takes 4 JDAM Coords in the form:
 ```
 LAT
