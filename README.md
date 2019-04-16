@@ -23,7 +23,7 @@ ALT
 Where the lat long and alt are pure numbers with positive designating North and East and negative designating South and West
 Expects PP1-4 to be vertical with no headers/footers
 
-# ::KEYBINDS MUST BE BY DEFAULT::
+# ::KEYBINDS MUST INCLUDE::
 ```
    NUM 0-9         UFC 0-9
    ENTER           UFC ENTER (NOT numEnter, regular enter)
