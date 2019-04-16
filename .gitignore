@@ -113,6 +113,7 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-#icon xcf
+#testing files
 HoneyBadgers256.xcf
 HoneyBadgers.png
+temp

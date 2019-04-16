@@ -118,7 +118,7 @@ def ReleaseKey(hexKeyCode):
 
 # msdn.microsoft.com/en-us/library/dd375731 source for scan codes
 def numK(num):
-    if(num<0|num>9):
+    if(num<0 or num>9):
         print("num out of bounds func only handles int 0-9")
         return 0x61
     else:
@@ -133,6 +133,9 @@ def LCTRL():
 #couldn't find a scan code for Num Enter
 def ENTER():
     return 0x0D
+
+def NUMDEC(): #Num.
+    return 0x6E
 
 def sendNum(num):
     numStr=str(num)
@@ -158,9 +161,11 @@ def CreatePlan():
     coord=entCoords.get("1.0",'end-1c')
     coord=coord.split("\n")
     plan=[]
+    plans=1
     loop=0
     for line in coord:
-        if(line==""):
+        if(line=="" or plans==6):
+            print("plans equalled " + str(plans))
             break
         elif(loop==0):
             lat=int(line)
@@ -172,6 +177,7 @@ def CreatePlan():
             elev=int(line)
             plan.append(Point(lat, lon, elev))
             loop=0
+            plans+=1
     return plan
 
 def main():
@@ -181,9 +187,12 @@ def main():
         ddd=int(boxDelay.get())
     except:
         ddd=15
-    time.sleep()
+    time.sleep(ddd)
     #start sending keys
     #ONCE AGAIN ASSUMING JDAMS ARE ALREAD SELECTED
+    #should prevent the Main to support bug     L MDI PB 4
+    sendCombo(LCTRL(),numK(7))
+    time.sleep(.5)
     #Menu           L MDI PB 18
     sendCombo(LCTRL(),numK(6))
     time.sleep(.5)
@@ -195,6 +204,11 @@ def main():
     time.sleep(.5)
     #PP1            L MDI PB 6
     sendCombo(LCTRL(),numK(1))
+    time.sleep(.5)
+    #UFC CLEAR      Make sure TGT UFC is unboxed
+    sendKey(NUMDEC())
+    time.sleep(.5)
+    sendKey(NUMDEC())
     time.sleep(.5)
     #TGT UFC        L MDI PB 14
     sendCombo(LCTRL(),numK(9))

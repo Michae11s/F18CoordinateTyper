@@ -1,15 +1,15 @@
 # F18CoordinateTyper
 Written By Kyle Michaels
+
 feel free to build with:
 '''
 pyinstaller .\\JDAMCoordsTyper.spec
 '''
 
 ## Notes
-- **MAKE SURE JDAM IS ALREADY SELECTED ON MDI STORES PAGE**
-- **MAKE SURE TGT UFC IS NOT BOXED**
+- **MAKE SURE JDAM IS ALREADY SELECTED ON STORES PAGE**
 - **Use Delay Spin Wheel to Set the Amount of Time to Tab Back into Game**
-## Takes 4 JDAM Coords in the form:
+## Takes 1-5 JDAM Coords in the form:
 ```
 LAT
 LONG
@@ -30,9 +30,10 @@ Expects PP1-4 to be vertical with no headers/footers
 # ::KEYBINDS MUST INCLUDE::
 ```
    NUM 0-9         UFC 0-9
-   ENTER           UFC ENTER (NOT numEnter, regular enter)
+   ENTER           UFC ENTER  <<<<NOTE:(NOT numEnter, regular enter)
+   NUM.            UFC CLEAR
    LALT+NUM1-5     UFC Option Select 1-5
-   LCTRL+NUM1-4    LEFT MDI PB 6-9
+   LCTRL+NUM1-5    LEFT MDI PB 6-10
    LCTRL+NUM6      LEFT MDI PB 18
    LCTRL+NUM7      LEFT MDI PB 4
    LCTRL+NUM8      LEFT MDI PB 11

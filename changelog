@@ -1,3 +1,8 @@
 ## V1.1
 - Added variable delay to alt tab back in
 - Added HoneyBadgers icon
+- Added ability to parse 5 preplanned-points
+ -**REQUIRES "LCTRL+NUM5" to be bound to "LEFT MDI PB 10"
+- No longer require TGT UFC to be unboxed
+ - **However added required bind Num. bound to "UFC Pushbutton Clear"**
+- Squashed bug if left MDI on Main menu page
