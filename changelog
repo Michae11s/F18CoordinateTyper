@@ -1,5 +1,8 @@
 # Changelog
-##V1.1.1
+## V1.1.2
+- Added fix for negative altitude(sets alt to zero as DCS won't allow input of 0 altitude)
+
+## V1.1.1
 - Made the window non-resizable for llama
 
 ## V1.1

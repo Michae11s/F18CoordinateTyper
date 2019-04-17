@@ -102,7 +102,10 @@ class Point:
         self.lon=str(abs(lon)).zfill(8)[0:6]
         self.lond=str(abs(lon)).zfill(8)[6:8]
 
-        self.alt = alt
+        if(alt < 0):
+            self.alt = str(0)
+        else:
+            self.alt = str(alt)
 
 ###### Functions #####
 def PressKey(hexKeyCode):
